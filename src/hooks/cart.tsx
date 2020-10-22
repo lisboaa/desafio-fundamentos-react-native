@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 
 import AsyncStorage from '@react-native-community/async-storage';
-import { Product } from 'src/pages/Dashboard/styles';
+import { Product } from '../pages/Dashboard/styles';
 
 interface Product {
   id: string;
@@ -77,8 +77,18 @@ const CartProvider: React.FC = ({ children }) => {
   );
 
   const decrement = useCallback(async id => {
-    // TODO DECREMENTS A PRODUCT QUANTITY IN THE CART
-  }, []);
+    const newProducts = products.map(
+      product => product.id === id ? { ...product, quantity: product.quantity - 1 }
+      : product,
+    );
+  
+  setProducts(newProducts);
+
+  await AsyncStorage.setItem(
+    '@GoMarketplace:products',
+    JSON.stringify(newProducts)
+  )
+  }, [products]);
 
   const value = React.useMemo(
     () => ({ addToCart, increment, decrement, products }),
